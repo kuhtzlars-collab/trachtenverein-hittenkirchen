@@ -1,0 +1,15 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "hiki-static",
+      "runtimeExecutable": "powershell",
+      "runtimeArgs": [
+        "-NoProfile",
+        "-Command",
+        "$l=New-Object System.Net.HttpListener;$l.Prefixes.Add('http://localhost:5183/');$l.Start();Write-Host 'serving on http://localhost:5183/';while($l.IsListening){$c=$l.GetContext();$p=[Uri]::UnescapeDataString($c.Request.Url.AbsolutePath.TrimStart('/'));if(!$p){$p='index.html'};if(Test-Path $p -PathType Container){$p=Join-Path $p 'index.html'};if(Test-Path $p -PathType Leaf){$e=[IO.Path]::GetExtension($p).ToLower();$m=@{'.html'='text/html; charset=utf-8';'.css'='text/css; charset=utf-8';'.js'='application/javascript; charset=utf-8';'.json'='application/json';'.png'='image/png';'.jpg'='image/jpeg';'.jpeg'='image/jpeg';'.svg'='image/svg+xml';'.ico'='image/x-icon';'.webp'='image/webp'};if($m.ContainsKey($e)){$c.Response.ContentType=$m[$e]};$c.Response.KeepAlive=$false;$b=[IO.File]::ReadAllBytes($p);$c.Response.ContentLength64=$b.LongLength;try{$c.Response.OutputStream.Write($b,0,$b.Length)}catch{}}else{$c.Response.StatusCode=404};try{$c.Response.OutputStream.Close()}catch{}}"
+      ],
+      "port": 5183
+    }
+  ]
+}
