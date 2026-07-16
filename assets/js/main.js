@@ -241,8 +241,11 @@
               ("0" + n.datum.getDate()).slice(-2);
     var SCHLUESSEL = "hiki-termin-hinweis";
 
+    // Bewusst sessionStorage statt localStorage: Der geschlossene Hinweis wird nur
+    // für die laufende Browser-Sitzung gemerkt. Beim nächsten Besuch erscheint er
+    // wieder – und beim Schließen des Browsers verschwindet der Eintrag von selbst.
     var bereitsGeschlossen = false;
-    try { bereitsGeschlossen = window.localStorage.getItem(SCHLUESSEL) === iso; } catch (err) {}
+    try { bereitsGeschlossen = window.sessionStorage.getItem(SCHLUESSEL) === iso; } catch (err) {}
 
     if (!bereitsGeschlossen) {
       // Eigener Variablenname (nicht "box"): die Lightbox oben nutzt bereits ein
@@ -272,7 +275,7 @@
 
       var schliessen = function () {
         hinweis.classList.remove("open");
-        try { window.localStorage.setItem(SCHLUESSEL, iso); } catch (err) {}
+        try { window.sessionStorage.setItem(SCHLUESSEL, iso); } catch (err) {}
         setTimeout(function () { hinweis.remove(); }, 300);
       };
       hinweis.querySelector(".termin-popup__close").addEventListener("click", schliessen);
