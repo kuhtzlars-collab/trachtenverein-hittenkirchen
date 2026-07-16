@@ -274,28 +274,15 @@
     <div class="container">
       <span class="eyebrow">Nächste Termine</span>
       <h2 class="section-title">Wann was los ist</h2>
-      <p class="lead" style="color:#dfe8e0; margin-bottom:2rem;">Ein Auszug aus unserem Vereinskalender.
-        <em>(Beispieltermine – die aktuellen Daten pflegt der Verein hier ein.)</em></p>
-      <div class="termine">
-        <div class="termin reveal">
-          <div class="termin__date"><b>04</b><span>Mai</span></div>
-          <div class="termin__info"><strong>Jahrtag mit Kirchenzug &amp; Versammlung</strong><span>Kirche St. Bartholomäus · Trachtenheim</span></div>
-          <div class="termin__time">ab 9:00 Uhr</div>
-        </div>
-        <div class="termin reveal">
-          <div class="termin__date"><b>23</b><span>Mai</span></div>
-          <div class="termin__info"><strong>Maiandacht</strong><span>Aussichtskapelle · musikalisch gestaltet von der Fritz-Musi</span></div>
-          <div class="termin__time">19:00 Uhr</div>
-        </div>
-        <div class="termin reveal">
-          <div class="termin__date"><b>24</b><span>Aug</span></div>
-          <div class="termin__info"><strong>Patrozinium St. Bartholomäus</strong><span>Festgottesdienst mit Prozession</span></div>
-          <div class="termin__time">ganztags</div>
-        </div>
-        <div class="termin reveal">
-          <div class="termin__date"><b>Okt</b><span>2026</span></div>
-          <div class="termin__info"><strong>Musikantenhoagascht &amp; Weinfest</strong><span>Trachtenheim Hittenkirchen</span></div>
-          <div class="termin__time">Abend</div>
+      <p class="lead" style="color:#dfe8e0; margin-bottom:2rem;">Unsere nächsten Termine – vergangene
+        Termine verschwinden automatisch.</p>
+      <!-- Wird aus assets/js/termine.js gefüllt; der Text unten erscheint nur ohne JavaScript. -->
+      <div class="termine" data-termine-liste>
+        <div class="termin">
+          <div class="termin__info">
+            <strong>Termine auf Anfrage</strong>
+            <span>Bitte wende dich an den Verein – die aktuellen Termine teilen wir dir gerne mit.</span>
+          </div>
         </div>
       </div>
     </div>
@@ -427,6 +414,8 @@
     </div>
   </footer>
 
+  <!-- Terminliste (hier werden die Termine gepflegt) – muss vor main.js geladen werden -->
+  <script src="assets/js/termine.js"></script>
   <script src="assets/js/main.js"></script>
 </body>
 </html>

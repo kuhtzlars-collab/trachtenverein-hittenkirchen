@@ -156,4 +156,130 @@
       }
     });
   }
+
+  /* ---- Termine: Liste rendern + Hinweisbox „Nächster Termin" --------
+     Datenquelle ist assets/js/termine.js (window.HIKI_TERMINE).
+     Vergangene Termine fallen automatisch raus, jährliche und
+     regelbasierte Termine rollen von selbst ins nächste Jahr.        */
+  var MONATE = ["Januar","Februar","März","April","Mai","Juni",
+                "Juli","August","September","Oktober","November","Dezember"];
+  var MONATE_KURZ = ["Jan","Feb","Mär","Apr","Mai","Jun",
+                     "Jul","Aug","Sep","Okt","Nov","Dez"];
+  var WOCHENTAGE = ["Sonntag","Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag"];
+
+  function heuteMitternacht() {
+    var n = new Date();
+    return new Date(n.getFullYear(), n.getMonth(), n.getDate());
+  }
+
+  // n-ter Wochentag eines Monats, z. B. 1. Sonntag im Mai. nter = -1 -> letzter.
+  function nterWochentag(jahr, monat, wochentag, nter) {
+    if (nter < 0) {
+      var letzter = new Date(jahr, monat, 0); // letzter Tag des Monats
+      var diff = (letzter.getDay() - wochentag + 7) % 7;
+      return new Date(jahr, monat - 1, letzter.getDate() - diff);
+    }
+    var erster = new Date(jahr, monat - 1, 1);
+    var versatz = (wochentag - erster.getDay() + 7) % 7;
+    return new Date(jahr, monat - 1, 1 + versatz + (nter - 1) * 7);
+  }
+
+  // Nächstes Vorkommen eines Eintrags ab heute; null = liegt in der Vergangenheit
+  function naechstesVorkommen(e, heute) {
+    var jahr = heute.getFullYear();
+    if (e.regel) {
+      var d = nterWochentag(jahr, e.regel.monat, e.regel.wochentag, e.regel.nter);
+      if (d < heute) { d = nterWochentag(jahr + 1, e.regel.monat, e.regel.wochentag, e.regel.nter); }
+      return d;
+    }
+    if (!e.datum) { return null; }
+    var t = e.datum.split("-").map(Number);
+    if (e.jaehrlich) {
+      // Format "MM-TT"
+      var m = t[0], tag = t[1];
+      var k = new Date(jahr, m - 1, tag);
+      if (k < heute) { k = new Date(jahr + 1, m - 1, tag); }
+      return k;
+    }
+    // Format "JJJJ-MM-TT"
+    var voll = new Date(t[0], t[1] - 1, t[2]);
+    return voll < heute ? null : voll;
+  }
+
+  function kommendeTermine() {
+    var liste = window.HIKI_TERMINE;
+    if (!liste || !liste.length) { return []; }
+    var heute = heuteMitternacht();
+    return liste.map(function (e) {
+      var d = naechstesVorkommen(e, heute);
+      return d ? { eintrag: e, datum: d } : null;
+    }).filter(Boolean).sort(function (a, b) { return a.datum - b.datum; });
+  }
+
+  var termine = kommendeTermine();
+
+  /* Termine-Sektion füllen */
+  var listeEl = document.querySelector("[data-termine-liste]");
+  if (listeEl && termine.length) {
+    listeEl.innerHTML = termine.map(function (t) {
+      var d = t.datum, e = t.eintrag;
+      return '<div class="termin">' +
+        '<div class="termin__date"><b>' + d.getDate() + '</b><span>' +
+          MONATE_KURZ[d.getMonth()] + " " + d.getFullYear() + '</span></div>' +
+        '<div class="termin__info"><strong>' + e.titel + "</strong>" +
+          (e.ort ? "<span>" + e.ort + "</span>" : "") + "</div>" +
+        (e.zeit ? '<div class="termin__time">' + e.zeit + "</div>" : "") +
+        "</div>";
+    }).join("");
+  }
+
+  /* Hinweisbox „Nächster Termin" – nur auf der Startseite */
+  if (termine.length && document.getElementById("termine")) {
+    var n = termine[0];
+    var iso = n.datum.getFullYear() + "-" +
+              ("0" + (n.datum.getMonth() + 1)).slice(-2) + "-" +
+              ("0" + n.datum.getDate()).slice(-2);
+    var SCHLUESSEL = "hiki-termin-hinweis";
+
+    var bereitsGeschlossen = false;
+    try { bereitsGeschlossen = window.localStorage.getItem(SCHLUESSEL) === iso; } catch (err) {}
+
+    if (!bereitsGeschlossen) {
+      // Eigener Variablenname (nicht "box"): die Lightbox oben nutzt bereits ein
+      // "var box" im selben Funktions-Scope – das darf sich nicht überschreiben.
+      var hinweis = document.createElement("aside");
+      hinweis.className = "termin-popup";
+      hinweis.setAttribute("role", "complementary");
+      hinweis.setAttribute("aria-label", "Nächster Termin");
+      hinweis.innerHTML =
+        '<button class="termin-popup__close" aria-label="Hinweis schließen">&times;</button>' +
+        '<span class="termin-popup__eyebrow">Nächster Termin</span>' +
+        '<strong class="termin-popup__title"></strong>' +
+        '<span class="termin-popup__date"></span>' +
+        '<span class="termin-popup__meta"></span>' +
+        '<a class="termin-popup__link" href="#termine">Alle Termine ansehen →</a>';
+      hinweis.querySelector(".termin-popup__title").textContent = n.eintrag.titel;
+      hinweis.querySelector(".termin-popup__date").textContent =
+        WOCHENTAGE[n.datum.getDay()] + ", " + n.datum.getDate() + ". " +
+        MONATE[n.datum.getMonth()] + " " + n.datum.getFullYear();
+      hinweis.querySelector(".termin-popup__meta").textContent =
+        [n.eintrag.ort, n.eintrag.zeit].filter(Boolean).join(" · ");
+      document.body.appendChild(hinweis);
+
+      // Kurz verzögert einblenden. Bewusst ohne requestAnimationFrame: das feuert
+      // in Hintergrund-Tabs nicht, die Box würde dort nie erscheinen.
+      setTimeout(function () { hinweis.classList.add("open"); }, 600);
+
+      var schliessen = function () {
+        hinweis.classList.remove("open");
+        try { window.localStorage.setItem(SCHLUESSEL, iso); } catch (err) {}
+        setTimeout(function () { hinweis.remove(); }, 300);
+      };
+      hinweis.querySelector(".termin-popup__close").addEventListener("click", schliessen);
+      hinweis.querySelector(".termin-popup__link").addEventListener("click", schliessen);
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && hinweis.classList.contains("open")) { schliessen(); }
+      });
+    }
+  }
 })();

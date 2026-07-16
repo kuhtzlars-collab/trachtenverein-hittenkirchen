@@ -269,6 +269,56 @@ p { margin: 0 0 1em; }
 .termin__info span { color: var(--ink-soft); font-size: .92rem; }
 .termin__time { font-size: .9rem; color: var(--ink-soft); white-space: nowrap; }
 
+/* ---------- Hinweisbox „Nächster Termin" -------------------------------- */
+.termin-popup {
+  position: fixed;
+  right: clamp(14px, 3vw, 26px);
+  bottom: clamp(14px, 3vw, 26px);
+  z-index: 120;
+  width: min(360px, calc(100vw - 28px));
+  display: flex;
+  flex-direction: column;
+  gap: .3rem;
+  padding: 1.25rem 2.4rem 1.35rem 1.35rem;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-left: 5px solid var(--alpenrose);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  /* Startzustand: ausgeblendet, wird per .open eingeblendet */
+  opacity: 0;
+  transform: translateY(18px);
+  pointer-events: none;
+  transition: opacity .35s ease, transform .35s ease;
+}
+.termin-popup.open { opacity: 1; transform: none; pointer-events: auto; }
+
+.termin-popup__eyebrow {
+  font-size: .72rem; font-weight: 700; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--alpenrose);
+}
+.termin-popup__title { font-family: var(--font-head); font-size: 1.18rem; line-height: 1.25; color: var(--ink); }
+.termin-popup__date { font-weight: 600; color: var(--enzian); font-size: .95rem; }
+.termin-popup__meta { color: var(--ink-soft); font-size: .88rem; }
+.termin-popup__link { margin-top: .5rem; font-weight: 600; font-size: .9rem; color: var(--enzian); }
+
+.termin-popup__close {
+  position: absolute; top: 8px; right: 8px;
+  width: 32px; height: 32px; border: 0; border-radius: 50%;
+  background: transparent; color: var(--ink-soft);
+  font-size: 1.4rem; line-height: 1; cursor: pointer;
+  display: grid; place-items: center;
+  transition: background .15s ease, color .15s ease;
+}
+.termin-popup__close:hover { background: var(--cream-2); color: var(--ink); }
+
+@media (max-width: 520px) {
+  .termin-popup { right: 10px; left: 10px; bottom: 10px; width: auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .termin-popup { transition: opacity .2s ease; transform: none; }
+}
+
 /* ---------- Kontakt ----------------------------------------------------- */
 .contact-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: clamp(28px,5vw,56px); align-items: start; }
 .contact-card { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); padding: clamp(22px,3vw,34px); box-shadow: var(--shadow-sm); }
