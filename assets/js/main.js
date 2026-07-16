@@ -233,56 +233,46 @@
     }).join("");
   }
 
-  /* Hinweisbox „Nächster Termin" – nur auf der Startseite */
+  /* Hinweisbox „Nächster Termin" – nur auf der Startseite.
+     Bewusst ohne jedes Merken: Die Box erscheint bei jedem Aufruf der Startseite.
+     Dadurch speichert die Website nichts auf dem Gerät der Besucher (kein Cookie,
+     kein localStorage, kein sessionStorage) – siehe Datenschutzerklärung. */
   if (termine.length && document.getElementById("termine")) {
     var n = termine[0];
-    var iso = n.datum.getFullYear() + "-" +
-              ("0" + (n.datum.getMonth() + 1)).slice(-2) + "-" +
-              ("0" + n.datum.getDate()).slice(-2);
-    var SCHLUESSEL = "hiki-termin-hinweis";
 
-    // Bewusst sessionStorage statt localStorage: Der geschlossene Hinweis wird nur
-    // für die laufende Browser-Sitzung gemerkt. Beim nächsten Besuch erscheint er
-    // wieder – und beim Schließen des Browsers verschwindet der Eintrag von selbst.
-    var bereitsGeschlossen = false;
-    try { bereitsGeschlossen = window.sessionStorage.getItem(SCHLUESSEL) === iso; } catch (err) {}
+    // Eigener Variablenname (nicht "box"): die Lightbox oben nutzt bereits ein
+    // "var box" im selben Funktions-Scope – das darf sich nicht überschreiben.
+    var hinweis = document.createElement("aside");
+    hinweis.className = "termin-popup";
+    hinweis.setAttribute("role", "complementary");
+    hinweis.setAttribute("aria-label", "Nächster Termin");
+    hinweis.innerHTML =
+      '<button class="termin-popup__close" aria-label="Hinweis schließen">&times;</button>' +
+      '<span class="termin-popup__eyebrow">Nächster Termin</span>' +
+      '<strong class="termin-popup__title"></strong>' +
+      '<span class="termin-popup__date"></span>' +
+      '<span class="termin-popup__meta"></span>' +
+      '<a class="termin-popup__link" href="#termine">Alle Termine ansehen →</a>';
+    hinweis.querySelector(".termin-popup__title").textContent = n.eintrag.titel;
+    hinweis.querySelector(".termin-popup__date").textContent =
+      WOCHENTAGE[n.datum.getDay()] + ", " + n.datum.getDate() + ". " +
+      MONATE[n.datum.getMonth()] + " " + n.datum.getFullYear();
+    hinweis.querySelector(".termin-popup__meta").textContent =
+      [n.eintrag.ort, n.eintrag.zeit].filter(Boolean).join(" · ");
+    document.body.appendChild(hinweis);
 
-    if (!bereitsGeschlossen) {
-      // Eigener Variablenname (nicht "box"): die Lightbox oben nutzt bereits ein
-      // "var box" im selben Funktions-Scope – das darf sich nicht überschreiben.
-      var hinweis = document.createElement("aside");
-      hinweis.className = "termin-popup";
-      hinweis.setAttribute("role", "complementary");
-      hinweis.setAttribute("aria-label", "Nächster Termin");
-      hinweis.innerHTML =
-        '<button class="termin-popup__close" aria-label="Hinweis schließen">&times;</button>' +
-        '<span class="termin-popup__eyebrow">Nächster Termin</span>' +
-        '<strong class="termin-popup__title"></strong>' +
-        '<span class="termin-popup__date"></span>' +
-        '<span class="termin-popup__meta"></span>' +
-        '<a class="termin-popup__link" href="#termine">Alle Termine ansehen →</a>';
-      hinweis.querySelector(".termin-popup__title").textContent = n.eintrag.titel;
-      hinweis.querySelector(".termin-popup__date").textContent =
-        WOCHENTAGE[n.datum.getDay()] + ", " + n.datum.getDate() + ". " +
-        MONATE[n.datum.getMonth()] + " " + n.datum.getFullYear();
-      hinweis.querySelector(".termin-popup__meta").textContent =
-        [n.eintrag.ort, n.eintrag.zeit].filter(Boolean).join(" · ");
-      document.body.appendChild(hinweis);
+    // Kurz verzögert einblenden. Bewusst ohne requestAnimationFrame: das feuert
+    // in Hintergrund-Tabs nicht, die Box würde dort nie erscheinen.
+    setTimeout(function () { hinweis.classList.add("open"); }, 600);
 
-      // Kurz verzögert einblenden. Bewusst ohne requestAnimationFrame: das feuert
-      // in Hintergrund-Tabs nicht, die Box würde dort nie erscheinen.
-      setTimeout(function () { hinweis.classList.add("open"); }, 600);
-
-      var schliessen = function () {
-        hinweis.classList.remove("open");
-        try { window.sessionStorage.setItem(SCHLUESSEL, iso); } catch (err) {}
-        setTimeout(function () { hinweis.remove(); }, 300);
-      };
-      hinweis.querySelector(".termin-popup__close").addEventListener("click", schliessen);
-      hinweis.querySelector(".termin-popup__link").addEventListener("click", schliessen);
-      document.addEventListener("keydown", function (e) {
-        if (e.key === "Escape" && hinweis.classList.contains("open")) { schliessen(); }
-      });
-    }
+    var schliessen = function () {
+      hinweis.classList.remove("open");
+      setTimeout(function () { hinweis.remove(); }, 300);
+    };
+    hinweis.querySelector(".termin-popup__close").addEventListener("click", schliessen);
+    hinweis.querySelector(".termin-popup__link").addEventListener("click", schliessen);
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && hinweis.classList.contains("open")) { schliessen(); }
+    });
   }
 })();
