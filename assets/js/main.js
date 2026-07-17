@@ -166,6 +166,7 @@
   var MONATE_KURZ = ["Jan","Feb","Mär","Apr","Mai","Jun",
                      "Jul","Aug","Sep","Okt","Nov","Dez"];
   var WOCHENTAGE = ["Sonntag","Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag"];
+  var WOCHENTAGE_KURZ = ["So","Mo","Di","Mi","Do","Fr","Sa"];
 
   function heuteMitternacht() {
     var n = new Date();
@@ -233,46 +234,57 @@
     }).join("");
   }
 
-  /* Hinweisbox „Nächster Termin" – nur auf der Startseite.
-     Bewusst ohne jedes Merken: Die Box erscheint bei jedem Aufruf der Startseite.
-     Dadurch speichert die Website nichts auf dem Gerät der Besucher (kein Cookie,
-     kein localStorage, kein sessionStorage) – siehe Datenschutzerklärung. */
-  if (termine.length && document.getElementById("termine")) {
+  /* Termin-Leiste direkt unter dem Header – auf jeder Seite, dauerhaft sichtbar.
+     Kein Wegklicken, kein Merken, keine Speicherung auf dem Gerät der Besucher. */
+  var kopf = document.querySelector(".site-header");
+  if (termine.length && kopf) {
     var n = termine[0];
 
-    // Eigener Variablenname (nicht "box"): die Lightbox oben nutzt bereits ein
-    // "var box" im selben Funktions-Scope – das darf sich nicht überschreiben.
-    var hinweis = document.createElement("aside");
-    hinweis.className = "termin-popup";
-    hinweis.setAttribute("role", "complementary");
-    hinweis.setAttribute("aria-label", "Nächster Termin");
-    hinweis.innerHTML =
-      '<button class="termin-popup__close" aria-label="Hinweis schließen">&times;</button>' +
-      '<span class="termin-popup__eyebrow">Nächster Termin</span>' +
-      '<strong class="termin-popup__title"></strong>' +
-      '<span class="termin-popup__date"></span>' +
-      '<span class="termin-popup__meta"></span>' +
-      '<a class="termin-popup__link" href="#termine">Alle Termine ansehen →</a>';
-    hinweis.querySelector(".termin-popup__title").textContent = n.eintrag.titel;
-    hinweis.querySelector(".termin-popup__date").textContent =
-      WOCHENTAGE[n.datum.getDay()] + ", " + n.datum.getDate() + ". " +
-      MONATE[n.datum.getMonth()] + " " + n.datum.getFullYear();
-    hinweis.querySelector(".termin-popup__meta").textContent =
-      [n.eintrag.ort, n.eintrag.zeit].filter(Boolean).join(" · ");
-    document.body.appendChild(hinweis);
+    // Auf der Startseite direkt zum Abschnitt springen, sonst dorthin verlinken.
+    var zielTermine = document.getElementById("termine") ? "#termine" : "index.html#termine";
 
-    // Kurz verzögert einblenden. Bewusst ohne requestAnimationFrame: das feuert
-    // in Hintergrund-Tabs nicht, die Box würde dort nie erscheinen.
-    setTimeout(function () { hinweis.classList.add("open"); }, 600);
+    var leiste = document.createElement("div");
+    leiste.className = "termin-banner";
+    leiste.setAttribute("role", "complementary");
+    leiste.setAttribute("aria-label", "Nächster Termin");
+    leiste.innerHTML =
+      '<div class="container">' +
+        '<span class="termin-banner__label">📅 Nächster Termin</span>' +
+        '<span class="termin-banner__text"></span>' +
+        '<a class="termin-banner__link" href="' + zielTermine + '">Alle Termine</a>' +
+      '</div>';
 
-    var schliessen = function () {
-      hinweis.classList.remove("open");
-      setTimeout(function () { hinweis.remove(); }, 300);
-    };
-    hinweis.querySelector(".termin-popup__close").addEventListener("click", schliessen);
-    hinweis.querySelector(".termin-popup__link").addEventListener("click", schliessen);
-    document.addEventListener("keydown", function (e) {
-      if (e.key === "Escape" && hinweis.classList.contains("open")) { schliessen(); }
-    });
+    var text = leiste.querySelector(".termin-banner__text");
+    var titelEl = document.createElement("strong");
+    titelEl.textContent = n.eintrag.titel;
+    text.appendChild(titelEl);
+
+    text.appendChild(Object.assign(document.createElement("span"), { className: "sep", textContent: "·" }));
+
+    // Zwei Datumsvarianten: lang für Desktop, kurz fürs Handy (per CSS umgeschaltet),
+    // damit die Leiste auf schmalen Bildschirmen nicht über mehrere Zeilen läuft.
+    text.appendChild(Object.assign(document.createElement("span"), {
+      className: "termin-banner__datum termin-banner__datum--lang",
+      textContent: WOCHENTAGE[n.datum.getDay()] + ", " + n.datum.getDate() + ". " +
+                   MONATE[n.datum.getMonth()] + " " + n.datum.getFullYear()
+    }));
+    text.appendChild(Object.assign(document.createElement("span"), {
+      className: "termin-banner__datum termin-banner__datum--kurz",
+      textContent: WOCHENTAGE_KURZ[n.datum.getDay()] + ", " + n.datum.getDate() + ". " +
+                   MONATE_KURZ[n.datum.getMonth()]
+    }));
+
+    if (n.eintrag.zeit) {
+      text.appendChild(Object.assign(document.createElement("span"), { className: "sep sep--klein", textContent: "·" }));
+      text.appendChild(Object.assign(document.createElement("span"), { className: "termin-banner__zeit", textContent: n.eintrag.zeit }));
+    }
+    if (n.eintrag.ort) {
+      text.appendChild(Object.assign(document.createElement("span"), { className: "sep sep--klein", textContent: "·" }));
+      text.appendChild(Object.assign(document.createElement("span"), { className: "termin-banner__ort", textContent: n.eintrag.ort }));
+    }
+
+    kopf.insertAdjacentElement("afterend", leiste);
+    // Anker-Sprünge müssen die zusätzliche Leistenhöhe berücksichtigen
+    document.documentElement.classList.add("hat-termin-banner");
   }
 })();
