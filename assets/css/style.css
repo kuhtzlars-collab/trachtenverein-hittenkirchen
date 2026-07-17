@@ -66,6 +66,37 @@ h1, h2, h3, h4 {
 
 p { margin: 0 0 1em; }
 
+/* ---------- Tastaturbedienung ------------------------------------------
+   Sichtbarer Fokus für alle, die mit der Tab-Taste navigieren. :focus-visible
+   zeigt den Ring nur bei Tastatur, nicht bei Mausklick.                    */
+:focus-visible {
+  outline: 3px solid var(--enzian);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+.termin-banner :focus-visible,
+.hero :focus-visible,
+.section--dark :focus-visible,
+.page-head :focus-visible,
+.site-footer :focus-visible {
+  outline-color: #fff;    /* auf dunklen/farbigen Flächen sichtbar bleiben */
+}
+
+/* Sprunglink: nur sichtbar, wenn er den Fokus bekommt */
+.skip-link {
+  position: absolute;
+  left: 50%; top: 0;
+  transform: translate(-50%, -120%);
+  z-index: 200;
+  background: var(--enzian);
+  color: #fff;
+  padding: .7em 1.2em;
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  font-weight: 600;
+  transition: transform .18s ease;
+}
+.skip-link:focus { transform: translate(-50%, 0); text-decoration: none; }
+
 /* ---------- Layout-Helfer ---------------------------------------------- */
 .container {
   width: 100%;
