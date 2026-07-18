@@ -23,8 +23,14 @@
       nter: 1 = erster, 2 = zweiter … (-1 = letzter)
         { regel: { monat: 5, wochentag: 0, nter: 1 }, titel: "Jahrtag" }
 
-   Felder: titel (Pflicht), ort, zeit (alle optional).
+   Felder: titel (Pflicht), ort, zeit, hinweis (alle optional).
    Reihenfolge egal – es wird automatisch nach Datum sortiert.
+
+   MEHRTÄGIGE TERMINE (z. B. Theaterwochen): zusätzlich `bis` angeben. Der
+   Eintrag bleibt dann sichtbar, bis das Enddatum vorbei ist – nicht schon nach
+   dem ersten Tag. Sortiert wird nach `datum` (dem Beginn):
+        { datum: "2026-11-07", bis: "2026-12-28", titel: "Theater",
+          hinweis: "Vorstellungen: 7.11., 8.11., …" }
 
    ------------------------------------------------------------------------
    STAND: Veranstaltungsprogramm 2026 (Programmheft des Vereins).
@@ -89,16 +95,16 @@ window.HIKI_TERMINE = [
 
   /* ---------- Theater in Hittenkirchen 2026 ---------------------------- */
 
-  { datum: "2026-11-07", zeit: "20:00 Uhr", titel: "Theater im Trachtenheim", ort: "Trachtenheim Hittenkirchen" },
-  { datum: "2026-11-08", zeit: "18:00 Uhr", titel: "Theater im Trachtenheim", ort: "Trachtenheim Hittenkirchen" },
-  { datum: "2026-11-13", zeit: "20:00 Uhr", titel: "Theater im Trachtenheim", ort: "Trachtenheim Hittenkirchen" },
-  { datum: "2026-11-14", zeit: "20:00 Uhr", titel: "Theater im Trachtenheim", ort: "Trachtenheim Hittenkirchen" },
-  { datum: "2026-11-15", zeit: "18:00 Uhr", titel: "Theater im Trachtenheim", ort: "Trachtenheim Hittenkirchen" },
-  { datum: "2026-11-20", zeit: "20:00 Uhr", titel: "Theater im Trachtenheim", ort: "Trachtenheim Hittenkirchen" },
-  { datum: "2026-11-21", zeit: "20:00 Uhr", titel: "Theater im Trachtenheim", ort: "Trachtenheim Hittenkirchen" },
-  { datum: "2026-11-22", zeit: "18:00 Uhr", titel: "Theater im Trachtenheim", ort: "Trachtenheim Hittenkirchen" },
-  { datum: "2026-12-27", zeit: "20:00 Uhr", titel: "Theater im Trachtenheim", ort: "Trachtenheim Hittenkirchen" },
-  { datum: "2026-12-28", zeit: "20:00 Uhr", titel: "Theater im Trachtenheim", ort: "Trachtenheim Hittenkirchen" },
+  // Theaterwochen als EIN Eintrag: bleibt dank `bis` bis zur letzten Vorstellung
+  // (28.12.) sichtbar, angezeigt/sortiert wird nach dem Beginn (07.11.).
+  {
+    datum: "2026-11-07",
+    bis: "2026-12-28",
+    titel: "Theater im Trachtenheim",
+    ort: "Trachtenheim Hittenkirchen",
+    zeit: "Beginn 20:00 Uhr (So. 18:00 Uhr)",
+    hinweis: "Vorstellungen: 7., 8., 13., 14., 15., 20., 21. & 22. November sowie 27. & 28. Dezember"
+  },
 
   /* ---------- Programm 2026 – Advent / Weihnachten --------------------- */
 

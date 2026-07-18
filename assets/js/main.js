@@ -202,9 +202,16 @@
       if (k < heute) { k = new Date(jahr + 1, m - 1, tag); }
       return k;
     }
-    // Format "JJJJ-MM-TT"
+    // Format "JJJJ-MM-TT". Optional `bis` (Enddatum) für mehrtägige Termine:
+    // Der Eintrag bleibt sichtbar, bis das Enddatum vorbei ist – sortiert/angezeigt
+    // wird aber nach dem Beginn (datum).
     var voll = new Date(t[0], t[1] - 1, t[2]);
-    return voll < heute ? null : voll;
+    var ende = voll;
+    if (e.bis) {
+      var b = e.bis.split("-").map(Number);
+      ende = new Date(b[0], b[1] - 1, b[2]);
+    }
+    return ende < heute ? null : voll;
   }
 
   function kommendeTermine() {
@@ -228,7 +235,8 @@
         '<div class="termin__date"><b>' + d.getDate() + '</b><span>' +
           MONATE_KURZ[d.getMonth()] + " " + d.getFullYear() + '</span></div>' +
         '<div class="termin__info"><strong>' + e.titel + "</strong>" +
-          (e.ort ? "<span>" + e.ort + "</span>" : "") + "</div>" +
+          (e.ort ? "<span>" + e.ort + "</span>" : "") +
+          (e.hinweis ? '<span class="termin__hinweis">' + e.hinweis + "</span>" : "") + "</div>" +
         (e.zeit ? '<div class="termin__time">' + e.zeit + "</div>" : "") +
         "</div>";
     }).join("");

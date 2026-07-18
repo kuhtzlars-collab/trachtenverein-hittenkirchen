@@ -297,7 +297,8 @@ p { margin: 0 0 1em; }
 .termin__date b { display: block; font-family: var(--font-head); font-size: 1.5rem; color: var(--enzian); }
 .termin__date span { font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; color: var(--ink-soft); }
 .termin__info strong { display: block; font-size: 1.05rem; }
-.termin__info span { color: var(--ink-soft); font-size: .92rem; }
+.termin__info span { display: block; color: var(--ink-soft); font-size: .92rem; }
+.termin__info .termin__hinweis { margin-top: .15rem; font-size: .86rem; opacity: .9; }
 .termin__time { font-size: .9rem; color: var(--ink-soft); white-space: nowrap; }
 
 /* ---------- Termin-Leiste unter dem Header ------------------------------
@@ -444,6 +445,25 @@ html.hat-termin-banner { scroll-padding-top: calc(var(--header-h) + 46px); }
 .article__date { color: var(--alpenrose); font-weight: 700; font-size: .8rem; text-transform: uppercase; letter-spacing: .05em; }
 .article__body h2 { font-size: clamp(1.3rem,2.4vw,1.7rem); margin: .3rem 0 .5rem; }
 .article__body p { color: var(--ink-soft); }
+
+/* Hervorgehobener Bericht mit großem Aufmacher + Bildergalerie (einspaltig) */
+.article--feature { display: block; }
+.article--feature .article__lead { position: relative; }
+.article--feature .article__lead img { width: 100%; max-height: 460px; object-fit: cover; display: block; }
+.article--feature .article__lead figcaption {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  padding: 1.4rem 1.2rem .8rem;
+  background: linear-gradient(180deg, transparent, rgba(20,40,60,.75));
+  color: #fff; font-size: .85rem;
+}
+.article--feature .article__body { padding: clamp(22px,3vw,34px); }
+.article--feature .article__body p { color: var(--ink); }
+.report__gallery { margin: 1.8rem 0 .5rem; columns: 3 200px; column-gap: 12px; }
+.report__gallery figure { margin: 0 0 12px; break-inside: avoid; border-radius: var(--radius-sm); overflow: hidden; box-shadow: var(--shadow-sm); cursor: zoom-in; }
+.report__gallery img { width: 100%; display: block; transition: transform .3s ease, filter .3s ease; }
+.report__gallery figure:hover img { transform: scale(1.04); filter: brightness(1.05); }
+.report__credit { margin-top: 1.2rem; font-size: .85rem; color: var(--ink-soft); font-style: italic; }
+@media (max-width: 560px) { .report__gallery { columns: 2 130px; } }
 
 /* ---------- Seitenkopf (Unterseiten) ----------------------------------- */
 .page-head {
