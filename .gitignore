@@ -4,3 +4,7 @@ Desktop.ini
 .DS_Store
 *~
 .vscode/
+
+# Lokale Scratch-/Zwischendateien (nicht Teil der Website)
+output/
+tmp/
