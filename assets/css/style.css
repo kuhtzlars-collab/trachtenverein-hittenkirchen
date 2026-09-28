@@ -311,6 +311,26 @@ p { margin: 0 0 1em; }
 .termin__info span { display: block; color: var(--ink-soft); font-size: .92rem; }
 .termin__info .termin__hinweis { margin-top: .15rem; font-size: .86rem; opacity: .9; }
 .termin__time { font-size: .9rem; color: var(--ink-soft); white-space: nowrap; }
+.termin__meta { display: flex; flex-direction: column; align-items: flex-end; justify-content: center; gap: .45rem; }
+.termin__cal {
+  border: 1px solid var(--enzian); background: var(--white); color: var(--enzian);
+  font: inherit; font-size: .82rem; font-weight: 600; line-height: 1;
+  padding: .45em .8em; border-radius: 999px; cursor: pointer; white-space: nowrap;
+  transition: background .15s ease, color .15s ease;
+}
+.termin__cal:hover { background: var(--enzian); color: #fff; }
+
+/* Werkzeugleiste + QR in der Termine-Sektion (dunkler Hintergrund) */
+.termine-tools { margin-bottom: 1.4rem; }
+.termine-qr {
+  margin-top: 1.8rem; display: inline-flex; align-items: center; gap: 1.1rem;
+  background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.18);
+  border-radius: var(--radius); padding: 1rem 1.2rem; max-width: 480px;
+}
+.termine-qr img { width: 108px; height: 108px; background: #fff; padding: 7px; border-radius: 8px; flex: 0 0 auto; }
+.termine-qr__text { font-size: .92rem; color: #dfe8e0; }
+.termine-qr__text strong { color: #fff; display: block; margin-bottom: .25rem; font-family: var(--font-head); font-size: 1.05rem; }
+@media (max-width: 440px) { .termine-qr { flex-direction: column; align-items: flex-start; } }
 
 /* ---------- Termin-Leiste unter dem Header ------------------------------
    Klebt direkt unter dem (ebenfalls klebenden) Header und ist damit auf
@@ -546,7 +566,7 @@ html.hat-termin-banner { scroll-padding-top: calc(var(--header-h) + 46px); }
   .form-row { grid-template-columns: 1fr; }
   .footer-grid { grid-template-columns: 1fr; }
   .termin { grid-template-columns: 74px 1fr; }
-  .termin__time { grid-column: 2; }
+  .termin__meta { grid-column: 2; flex-direction: row; align-items: center; gap: .9rem; flex-wrap: wrap; }
   .gallery { columns: 2 140px; }
   .hero__inner { padding-block: 60px; }
 }

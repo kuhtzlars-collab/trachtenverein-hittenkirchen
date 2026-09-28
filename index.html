@@ -323,8 +323,12 @@
     <div class="container">
       <span class="eyebrow">Nächste Termine</span>
       <h2 class="section-title">Wann was los ist</h2>
-      <p class="lead" style="color:#dfe8e0; margin-bottom:2rem;">Unsere nächsten Termine – vergangene
-        Termine verschwinden automatisch.</p>
+      <p class="lead" style="color:#dfe8e0; margin-bottom:1.4rem;">Unsere nächsten Termine – vergangene
+        Termine verschwinden automatisch. Einzelne Termine oder alle auf einmal lassen sich direkt in
+        den eigenen Kalender übernehmen.</p>
+      <div class="termine-tools">
+        <button type="button" id="termine-alle" class="btn btn--primary">🗓 Alle Termine in den Kalender</button>
+      </div>
       <!-- Wird aus assets/js/termine.js gefüllt; der Text unten erscheint nur ohne JavaScript. -->
       <div class="termine" data-termine-liste>
         <div class="termin">
@@ -333,6 +337,12 @@
             <span>Bitte wende dich an den Verein – die aktuellen Termine teilen wir dir gerne mit.</span>
           </div>
         </div>
+      </div>
+      <div class="termine-qr">
+        <img src="assets/img/qr-termine.svg" alt="QR-Code zu den Vereinsterminen" width="108" height="108">
+        <span class="termine-qr__text"><strong>Termine aufs Handy</strong>
+          QR-Code scannen und die Vereinstermine am Smartphone öffnen – dort einzeln oder alle
+          in den Kalender übernehmen.</span>
       </div>
     </div>
   </section>

@@ -226,10 +226,74 @@
 
   var termine = kommendeTermine();
 
+  /* ---- Kalender-Export (.ics) --------------------------------------
+     Erzeugt iCalendar-Dateien komplett im Browser (kein Server, keine
+     externen Dienste). Beginnt die Zeitangabe mit "HH:MM", wird eine
+     Uhrzeit (schwebende Ortszeit, +2 h) eingetragen, sonst ein ganztägiger
+     Termin. Mehrtägig gebündelte Termine (Theater, Feld `bis`) werden
+     bewusst NICHT als Wochenblock ausgegeben, sondern ganztägig am Beginn –
+     alle Spieltermine stehen in der Beschreibung (hinweis). */
+  var SEITEN_URL = "https://kuhtzlars-collab.github.io/trachtenverein-hittenkirchen/#termine";
+
+  function pad(n) { return (n < 10 ? "0" : "") + n; }
+  function icsDate(d) { return "" + d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate()); }
+  function icsEscape(s) {
+    return String(s || "").replace(/\\/g, "\\\\").replace(/;/g, "\\;")
+      .replace(/,/g, "\\,").replace(/\r?\n/g, "\\n");
+  }
+  function icsStempel() {
+    var n = new Date();
+    return "" + n.getUTCFullYear() + pad(n.getUTCMonth() + 1) + pad(n.getUTCDate()) + "T" +
+           pad(n.getUTCHours()) + pad(n.getUTCMinutes()) + pad(n.getUTCSeconds()) + "Z";
+  }
+  function falteZeile(line) {            // RFC 5545: lange Zeilen falten
+    if (line.length <= 74) return line;
+    var out = line.slice(0, 74), rest = line.slice(74);
+    while (rest.length > 73) { out += "\r\n " + rest.slice(0, 73); rest = rest.slice(73); }
+    return out + "\r\n " + rest;
+  }
+  function vevent(t) {
+    var d = t.datum, e = t.eintrag;
+    var uid = icsDate(d) + "-" + (e.titel || "termin").toLowerCase().replace(/[^a-z0-9]+/g, "-").slice(0, 40) +
+              "@trachtenverein-hittenkirchen.de";
+    var beschr = [e.zeit, e.hinweis, "Trachtenverein Hittenkirchen"].filter(Boolean).join("\n");
+    var m = (e.zeit || "").match(/^\s*(\d{1,2}):(\d{2})/);
+    var lines = ["BEGIN:VEVENT", "UID:" + uid, "DTSTAMP:" + icsStempel()];
+    if (m) {
+      var endeD = new Date(d.getFullYear(), d.getMonth(), d.getDate(), +m[1] + 2, +m[2]);
+      lines.push("DTSTART:" + icsDate(d) + "T" + pad(+m[1]) + m[2] + "00",
+                 "DTEND:" + icsDate(endeD) + "T" + pad(endeD.getHours()) + pad(endeD.getMinutes()) + "00");
+    } else {
+      var naechster = new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1);
+      lines.push("DTSTART;VALUE=DATE:" + icsDate(d), "DTEND;VALUE=DATE:" + icsDate(naechster));
+    }
+    lines.push("SUMMARY:" + icsEscape(e.titel));
+    if (e.ort) { lines.push("LOCATION:" + icsEscape(e.ort)); }
+    lines.push("DESCRIPTION:" + icsEscape(beschr), "URL:" + SEITEN_URL, "END:VEVENT");
+    return lines.map(falteZeile).join("\r\n");
+  }
+  function baueICS(liste) {
+    return ["BEGIN:VCALENDAR", "VERSION:2.0",
+            "PRODID:-//Trachtenverein Hittenkirchen//Termine//DE", "CALSCALE:GREGORIAN"]
+      .concat(liste.map(vevent)).concat(["END:VCALENDAR"]).join("\r\n");
+  }
+  function ladeICS(text, dateiname) {
+    try {
+      var blob = new Blob([text], { type: "text/calendar;charset=utf-8" });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement("a");
+      a.href = url; a.download = dateiname;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function () { URL.revokeObjectURL(url); }, 1500);
+    } catch (err) {
+      window.location.href = "data:text/calendar;charset=utf-8," + encodeURIComponent(text);
+    }
+  }
+
   /* Termine-Sektion füllen */
   var listeEl = document.querySelector("[data-termine-liste]");
   if (listeEl && termine.length) {
-    listeEl.innerHTML = termine.map(function (t) {
+    listeEl.innerHTML = termine.map(function (t, i) {
       var d = t.datum, e = t.eintrag;
       return '<div class="termin">' +
         '<div class="termin__date"><b>' + d.getDate() + '</b><span>' +
@@ -237,9 +301,33 @@
         '<div class="termin__info"><strong>' + e.titel + "</strong>" +
           (e.ort ? "<span>" + e.ort + "</span>" : "") +
           (e.hinweis ? '<span class="termin__hinweis">' + e.hinweis + "</span>" : "") + "</div>" +
-        (e.zeit ? '<div class="termin__time">' + e.zeit + "</div>" : "") +
+        '<div class="termin__meta">' +
+          (e.zeit ? '<span class="termin__time">' + e.zeit + "</span>" : "") +
+          '<button type="button" class="termin__cal" data-i="' + i +
+            '" aria-label="Diesen Termin in den Kalender eintragen">🗓 Kalender</button>' +
+        "</div>" +
         "</div>";
     }).join("");
+
+    // Einzelner Termin -> .ics
+    listeEl.addEventListener("click", function (ev) {
+      var btn = ev.target.closest(".termin__cal");
+      if (!btn) { return; }
+      var t = termine[+btn.getAttribute("data-i")];
+      if (t) { ladeICS(baueICS([t]), "termin-" + icsDate(t.datum) + ".ics"); }
+    });
+  }
+
+  // "Alle Termine" -> kombinierte .ics
+  var alleBtn = document.getElementById("termine-alle");
+  if (alleBtn) {
+    if (termine.length) {
+      alleBtn.addEventListener("click", function () {
+        ladeICS(baueICS(termine), "trachtenverein-hittenkirchen-termine.ics");
+      });
+    } else {
+      alleBtn.style.display = "none";
+    }
   }
 
   /* Termin-Leiste direkt unter dem Header – auf jeder Seite, dauerhaft sichtbar.
