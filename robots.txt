@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 
 # Beim Umzug auf die eigene Domain hier die Sitemap-URL anpassen
-Sitemap: https://kuhtzlars-collab.github.io/trachtenverein-hittenkirchen/sitemap.xml
+Sitemap: https://trachtenverein-hittenkirchen.de/sitemap.xml

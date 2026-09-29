@@ -233,7 +233,7 @@
      Termin. Mehrtägig gebündelte Termine (Theater, Feld `bis`) werden
      bewusst NICHT als Wochenblock ausgegeben, sondern ganztägig am Beginn –
      alle Spieltermine stehen in der Beschreibung (hinweis). */
-  var SEITEN_URL = "https://kuhtzlars-collab.github.io/trachtenverein-hittenkirchen/#termine";
+  var SEITEN_URL = "https://trachtenverein-hittenkirchen.de/#termine";
 
   function pad(n) { return (n < 10 ? "0" : "") + n; }
   function icsDate(d) { return "" + d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate()); }

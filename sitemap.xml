@@ -2,27 +2,27 @@
 <!-- Beim Umzug auf die eigene Domain alle <loc> anpassen. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://kuhtzlars-collab.github.io/trachtenverein-hittenkirchen/</loc>
+    <loc>https://trachtenverein-hittenkirchen.de/</loc>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://kuhtzlars-collab.github.io/trachtenverein-hittenkirchen/aktuelles.html</loc>
+    <loc>https://trachtenverein-hittenkirchen.de/aktuelles.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://kuhtzlars-collab.github.io/trachtenverein-hittenkirchen/fotos.html</loc>
+    <loc>https://trachtenverein-hittenkirchen.de/fotos.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://kuhtzlars-collab.github.io/trachtenverein-hittenkirchen/impressum.html</loc>
+    <loc>https://trachtenverein-hittenkirchen.de/impressum.html</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://kuhtzlars-collab.github.io/trachtenverein-hittenkirchen/datenschutz.html</loc>
+    <loc>https://trachtenverein-hittenkirchen.de/datenschutz.html</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
