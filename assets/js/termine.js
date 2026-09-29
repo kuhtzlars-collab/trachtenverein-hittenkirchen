@@ -99,11 +99,11 @@ window.HIKI_TERMINE = [
   // (28.12.) sichtbar, angezeigt/sortiert wird nach dem Beginn (07.11.).
   {
     datum: "2026-11-07",
-    bis: "2026-12-28",
-    titel: "Theater im Trachtenheim",
+    bis: "2026-11-28",
+    titel: "Theater „A narrisches Durcheinand“",
     ort: "Trachtenheim Hittenkirchen",
-    zeit: "Beginn 20:00 Uhr (So. 18:00 Uhr)",
-    hinweis: "Vorstellungen: 7., 8., 13., 14., 15., 20., 21. & 22. November sowie 27. & 28. Dezember"
+    zeit: "Beginn 20:00 Uhr (So. 15:00/18:00 Uhr)",
+    hinweis: "10 Vorstellungen: Sa 7.11. (Premiere) 20 Uhr · So 8.11. 18 Uhr · Fr 13.11. 20 Uhr · Sa 14.11. 20 Uhr · So 15.11. 15 Uhr · Fr 20.11. 20 Uhr · Sa 21.11. 20 Uhr · So 22.11. 18 Uhr · Fr 27.11. 20 Uhr · Sa 28.11. 20 Uhr. Kartenverkauf: Sa 17.10., 13–15 Uhr im Trachtenheim."
   },
 
   /* ---------- Programm 2026 – Advent / Weihnachten --------------------- */

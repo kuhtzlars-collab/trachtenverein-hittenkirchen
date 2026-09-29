@@ -268,6 +268,69 @@ p { margin: 0 0 1em; }
   content: "❦"; position: absolute; left: 0; top: -1px; color: var(--gold); font-size: 1.05em;
 }
 
+/* ---------- Theater: aktuelle Produktion ------------------------------- */
+.theater-prod {
+  margin-top: clamp(34px, 5vw, 58px);
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: clamp(1.5rem, 4vw, 2.6rem);
+}
+.theater-prod__label {
+  display: inline-block;
+  font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--alpenrose); margin-bottom: .5rem;
+}
+.theater-prod__title { margin: 0 0 .3rem; font-size: clamp(1.5rem, 3.4vw, 2.1rem); }
+.theater-prod__sub { margin: 0 0 1.1rem; color: var(--ink-soft); font-size: 1.05rem; font-style: italic; }
+.theater-prod p { margin: 0 0 1rem; }
+
+.theater-detail {
+  margin-top: 1.6rem;
+  display: grid; grid-template-columns: 1.15fr 1fr;
+  gap: clamp(20px, 3vw, 40px);
+  align-items: start;
+}
+.theater-detail h4 {
+  margin: 0 0 .8rem; font-size: 1.15rem;
+  padding-bottom: .5rem; border-bottom: 2px solid var(--line);
+}
+
+.spielplan { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+.spielplan li {
+  display: flex; align-items: baseline; gap: .8rem;
+  padding: .55rem 0; border-bottom: 1px solid var(--line);
+}
+.spielplan li:last-child { border-bottom: 0; }
+.spielplan__datum { font-weight: 600; color: var(--ink); }
+.spielplan__zeit { margin-left: auto; color: var(--ink-soft); font-size: .95rem; white-space: nowrap; }
+.spielplan__tag {
+  font-size: .7rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+  color: #fff; background: var(--alpenrose);
+  padding: .2em .6em; border-radius: 999px; align-self: center;
+}
+.spielplan__premiere .spielplan__datum { color: var(--alpenrose); }
+
+.karten {
+  background: var(--enzian-light);
+  border-radius: var(--radius-sm);
+  padding: 1.3rem 1.4rem;
+}
+.karten h4 { border-bottom-color: rgba(31,92,139,.25); }
+.karten p { margin: 0 0 .9rem; font-size: .98rem; }
+.karten p:last-child { margin-bottom: 0; }
+.karten__preise {
+  display: flex; gap: 1.4rem; flex-wrap: wrap;
+  padding: .6rem 0; border-top: 1px solid rgba(31,92,139,.18); border-bottom: 1px solid rgba(31,92,139,.18);
+}
+.karten__preise strong { color: var(--enzian); }
+.karten__ort { color: var(--ink-soft); font-size: .88rem; }
+
+@media (max-width: 760px) {
+  .theater-detail { grid-template-columns: 1fr; }
+}
+
 /* ---------- Karten-Grid (Vereinsleben / Aktuelles) --------------------- */
 .grid { display: grid; gap: clamp(18px, 3vw, 30px); }
 .grid--3 { grid-template-columns: repeat(3, 1fr); }
