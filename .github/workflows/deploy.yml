@@ -31,6 +31,10 @@ jobs:
           protocol: ftps
           port: 21
 
+          # Höheres Timeout gegen Verbindungsabbrüche (ECONNRESET) bei größeren
+          # Uploads über FTPS. Standard sind 30 s – hier 2 Minuten pro Vorgang.
+          timeout: 120000
+
           # Was hochgeladen wird: das komplette Repo ...
           local-dir: ./
           # ... in den Web-Ordner. Bei einem FTP-Benutzer, der direkt im
