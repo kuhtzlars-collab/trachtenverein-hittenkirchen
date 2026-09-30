@@ -1,0 +1,53 @@
+name: Deploy zu All-Inkl (FTP)
+
+# Läuft automatisch bei jedem Push auf main – und lässt sich im
+# GitHub-Reiter "Actions" auch manuell starten (workflow_dispatch).
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Verhindert gleichzeitige Deploys (der letzte gewinnt).
+concurrency:
+  group: ftp-deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Repository auschecken
+        uses: actions/checkout@v4
+
+      - name: Per FTPS zu All-Inkl hochladen
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          # Zugangsdaten aus den GitHub-Secrets (Settings -> Secrets and variables -> Actions)
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+
+          # All-Inkl unterstützt verschlüsseltes FTP (FTPS, explizit über Port 21).
+          protocol: ftps
+          port: 21
+
+          # Was hochgeladen wird: das komplette Repo ...
+          local-dir: ./
+          # ... in den Web-Ordner. Bei einem FTP-Benutzer, der direkt im
+          # Document-Root landet, bleibt das "./". Sonst hier den Pfad zum
+          # Domain-Ordner eintragen, z. B. "/trachtenverein/".
+          server-dir: ./
+
+          # Nur geänderte Dateien werden übertragen (Diff-Abgleich über eine
+          # Statusdatei auf dem Server). Beim allerersten Lauf: alles.
+          # Diese Dinge NICHT auf den Webspace laden (nur fürs Entwickeln):
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/.github/**
+            **/.claude/**
+            **/tmp/**
+            **/output/**
+            **/*.md
+            **/.gitignore
+            **/.ftp-deploy-sync-state.json
