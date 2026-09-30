@@ -316,6 +316,55 @@
       var t = termine[+btn.getAttribute("data-i")];
       if (t) { ladeICS(baueICS([t]), "termin-" + icsDate(t.datum) + ".ics"); }
     });
+
+    /* SEO: kommende Termine zusätzlich als schema.org/Event (JSON-LD) in den
+       <head> einfügen – Chance auf Rich-Results (Veranstaltungen in der Suche).
+       Datenquelle bleibt HIKI_TERMINE, also wartungsfrei. Nur hier (Startseite,
+       wo die Termin-Liste steht). */
+    try {
+      var events = termine.slice(0, 25).map(function (t) {
+        var d = t.datum, e = t.eintrag;
+        var m = (e.zeit || "").match(/^\s*(\d{1,2}):(\d{2})/);
+        var start = d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+        if (m) { start += "T" + pad(+m[1]) + ":" + m[2] + ":00"; }
+        var ev = {
+          "@context": "https://schema.org",
+          "@type": "Event",
+          "name": e.titel,
+          "startDate": start,
+          "eventStatus": "https://schema.org/EventScheduled",
+          "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+          "location": {
+            "@type": "Place",
+            "name": e.ort || "Trachtenheim Hittenkirchen",
+            "address": {
+              "@type": "PostalAddress",
+              "addressLocality": "Bernau am Chiemsee",
+              "postalCode": "83233",
+              "addressCountry": "DE"
+            }
+          },
+          "organizer": {
+            "@type": "Organization",
+            "name": "Trachtenverein Hittenkirchen",
+            "url": "https://www.trachtenverein-hittenkirchen.de/"
+          },
+          "url": SEITEN_URL
+        };
+        if (e.hinweis) { ev.description = e.hinweis; }
+        if (e.bis) {
+          var b = e.bis.split("-").map(Number);
+          ev.endDate = b[0] + "-" + pad(b[1]) + "-" + pad(b[2]);
+        }
+        return ev;
+      });
+      if (events.length) {
+        var ld = document.createElement("script");
+        ld.type = "application/ld+json";
+        ld.textContent = JSON.stringify(events);
+        document.head.appendChild(ld);
+      }
+    } catch (err) { /* JSON-LD ist optional – niemals die Seite blockieren */ }
   }
 
   // "Alle Termine" -> kombinierte .ics
