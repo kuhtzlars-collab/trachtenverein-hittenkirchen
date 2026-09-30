@@ -1,0 +1,11 @@
+# Trachtenverein Hittenkirchen – Apache-Konfiguration (All-Inkl)
+
+RewriteEngine On
+
+# 1) Ohne-www auf www umleiten – www ist die Hauptadresse (301, dauerhaft).
+#    http->https übernimmt bereits "SSL erzwingen" im KAS; hier nur www-Vereinheitlichung.
+RewriteCond %{HTTP_HOST} ^trachtenverein-hittenkirchen\.de$ [NC]
+RewriteRule ^(.*)$ https://www.trachtenverein-hittenkirchen.de/$1 [R=301,L]
+
+# 2) Eigene Fehlerseite verwenden
+ErrorDocument 404 /404.html
