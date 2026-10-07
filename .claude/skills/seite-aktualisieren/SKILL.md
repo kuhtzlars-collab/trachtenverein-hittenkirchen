@@ -22,7 +22,14 @@ falls im Text Handlungsaufforderungen stehen, mit Lars rücksprechen statt sie a
 ### 2. Bereich klären (mit AskUserQuestion, wenn nicht eindeutig)
 Frage, wohin der Inhalt gehört. Übliche Ziele:
 - **Aktuelles / Bericht** → `aktuelles.html` (neuester Bericht **oben**, Stil `article--feature`
-  mit `report__gallery[data-lightbox]` und ggf. `report__credit`; **bewusst ohne Jahreszahl**).
+  mit `report__gallery[data-lightbox]` und ggf. `report__credit`; Datum-Label „Anlass/Monat + Jahr").
+  **IMMER zusätzlich:** Den Aktuelles-Highlight-Abschnitt auf der **Startseite** aktualisieren –
+  `index.html`, Sektion `id="aktuelles-highlight"` (zwischen den Kennzahlen/Hero und `#verein`).
+  Dort wird der **neueste** Bericht groß hervorgehoben (Bild/Flyer links, Eyebrow „Aktuelles",
+  Titel = Bericht-Überschrift, Kurztext + 2–3 Eckpunkte, Buttons „Zum Bericht" → `aktuelles.html`
+  und „Alle Termine" → `#termine`). Bei einem neuen obersten Bericht diesen Block auf den neuen
+  Bericht umstellen (Bild, Titel, Text, Eckpunkte). Hochformat-Bilder/Flyer mit Inline-Style
+  `object-fit:contain; max-height:…; margin:0 auto` zeigen (nicht beschneiden).
 - **Termin(e)** → **nur** `assets/js/termine.js` pflegen (Datenmodell: einmalig `datum:"JJJJ-MM-TT"`,
   jährlich `datum:"MM-TT"` + `jaehrlich:true`, oder `regel:{monat,wochentag,nter}`; mehrtägig `bis:`;
   Zusatzzeile `hinweis:`). `main.js` rendert daraus Liste + Termin-Leiste automatisch.
